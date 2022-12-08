@@ -27,7 +27,7 @@ fn triplet(mode: u32, read: u32, write: u32, execute: u32) -> String {
 }
 
 pub fn run(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
-    println!("dir: {:?}", dir);
+    //println!("dir: {:?}", dir);
     if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
@@ -35,7 +35,7 @@ pub fn run(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
                 .file_name()
                 .into_string()
                 .or_else(|f| Err(format!("Invalid entry: {:?}", f)))?;
-            println!("file: {:?}", entry);
+            //println!("file: {:?}", entry);
             // добавить в иф условие с -h
             // if точки нет &, тогда выполняю это, иначе ничего не делать
             if file_name.chars().nth(0).unwrap() == '.' {
