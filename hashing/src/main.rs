@@ -29,3 +29,42 @@ fn main() {
         eprintln!("Usage: ./target/release/hashing -N <number of trailing zeros> -F <number of hashes>");
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::hash_finder;
+
+    #[test]
+    fn test_find_hashes() {
+        let hashes = hash_finder::find_hashes(2, 1);
+        assert_eq!(hashes.len(), 1);
+        assert!(hashes[0].1.ends_with("00"));
+
+        let hashes = hash_finder::find_hashes(3, 1);
+        assert_eq!(hashes.len(), 1);
+        assert!(hashes[0].1.ends_with("000"));
+    }
+
+    #[test]
+    fn test_find_multiple_hashes() {
+        let hashes = hash_finder::find_hashes(2, 3);
+        assert_eq!(hashes.len(), 3);
+        for hash in &hashes {
+            assert!(hash.1.ends_with("00"));
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_n() {
+        let hashes = hash_finder::find_hashes(0, 3);
+        assert_eq!(hashes.len(), 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_f() {
+        let hashes = hash_finder::find_hashes(3, 0);
+        assert_eq!(hashes.len(), 0);
+    }
+}
