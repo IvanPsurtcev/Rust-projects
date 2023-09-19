@@ -1,4 +1,4 @@
-use image::{save_buffer};
+use png::{Encoder, BitDepth, ColorType};
 
 const SIZE: usize = 1024;
 const START: usize = SIZE / 2;
@@ -51,19 +51,38 @@ fn main() {
     }
 
     let mut black_cells = 0;
-    let mut buffer: Vec<u8> = Vec::with_capacity(SIZE * SIZE);
+    let path = "ant.png";
+    let file = std::fs::File::create(path).unwrap();
+    let ref mut w = std::io::BufWriter::new(file);
+
+    let mut encoder = Encoder::new(w, SIZE as u32, SIZE as u32);
+    encoder.set_color(ColorType::Grayscale);
+    encoder.set_depth(BitDepth::One);
+    let mut writer = encoder.write_header().unwrap();
+
+    let mut compressed_buffer: Vec<u8> = Vec::with_capacity((SIZE * SIZE) / 8);
     for row in &grid {
+        let mut current_byte = 0u8;
+        let mut bit_position = 0;
+
         for &cell in row {
-            if cell { 
-                buffer.push(0); 
-                black_cells += 1; 
+            if !cell {
+                current_byte |= 1 << (7 - bit_position);
             } else {
-                buffer.push(255);
+                black_cells += 1;
+            }
+
+            bit_position += 1;
+            if bit_position == 8 {
+                compressed_buffer.push(current_byte);
+                current_byte = 0;
+                bit_position = 0;
             }
         }
     }
 
-    save_buffer("ant.png", &buffer, SIZE as u32, SIZE as u32, image::ColorType::L8).unwrap();
+    writer.write_image_data(&compressed_buffer).unwrap();
+
     println!("Number of black cells: {}", black_cells);
 }
 
