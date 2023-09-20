@@ -43,9 +43,9 @@ fn main() {
         }
 
         match direction {
-            Direction::Up => if y == 0 { out_of_bounds = true } else { y -= 1 },
+            Direction::Up => if y == 0 { out_of_bounds = true } else { y += 1 },
             Direction::Right => if x == SIZE - 1 { out_of_bounds = true } else { x += 1 },
-            Direction::Down => if y == SIZE - 1 { out_of_bounds = true } else { y += 1 },
+            Direction::Down => if y == SIZE - 1 { out_of_bounds = true } else { y -= 1 },
             Direction::Left => if x == 0 { out_of_bounds = true } else { x -= 1 },
         }
     }
